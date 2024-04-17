@@ -1,0 +1,15 @@
+;; shadow-cljs configuration
+{:source-paths
+ ["src/dev"
+  "src/main"
+  "src/test"]
+
+ :dependencies
+ [[lambdaisland/fetch "1.5.83"]]
+
+ :dev-http {8080 "public"}
+ :builds
+ {:client
+  {:target :browser
+   :output-dir "public/js"
+   :modules {:app {:init-fn sniff.client.app/page-setup}}}}}
