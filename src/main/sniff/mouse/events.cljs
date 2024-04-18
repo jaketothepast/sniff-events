@@ -33,7 +33,6 @@
      :start p1
      :end p2}))
 
-
 (defn handle-mouse [e]
   (let [val (and (not-empty @evt-buffer) (first @evt-buffer))
         pos (mouse-position e)]
