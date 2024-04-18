@@ -7,9 +7,12 @@
  :dependencies
  [[lambdaisland/fetch "1.5.83"]]
 
- :dev-http {8080 "public"}
+ :dev-http {8080 "public" 3001 "out/test"}
  :builds
  {:client
   {:target :browser
    :output-dir "public/js"
-   :modules {:app {:init-fn sniff.client.app/page-setup}}}}}
+   :modules {:app {:init-fn sniff.client.app/page-setup}}}
+  :test
+  {:target :browser-test
+   :test-dir "out/test"}}}
