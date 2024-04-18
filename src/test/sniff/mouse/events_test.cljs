@@ -20,3 +20,7 @@
   (let [event (do (events/handle-mouse test-click)
                   (events/handle-mouse test-click-not-same))]
     (is (= :click-and-drag (:event event)))))
+
+(deftest event-logs-time
+  (is (not= nil (:time (do (events/handle-mouse test-click)
+                           (events/handle-mouse test-click))))))

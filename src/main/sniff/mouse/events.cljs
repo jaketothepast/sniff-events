@@ -1,7 +1,4 @@
-(ns sniff.mouse.events
-  (:require [goog.events :as gevents]
-            [sniff.shared.distance :refer [euclidean]]
-            [goog.dom :as dom]))
+(ns sniff.mouse.events)
 
 (def evt-buffer
   "Temporary, to store previous mouse movement on click/drag"
@@ -28,10 +25,12 @@
   [p1 p2]
   (if (equal-point? p1 p2)
     {:event :click
-     :start p1}
+     :start p1
+     :time (js/Date.)}
     {:event :click-and-drag
      :start p1
-     :end p2}))
+     :end p2
+     :time (js/Date.)}))
 
 (defn handle-mouse [e]
   (let [val (and (not-empty @evt-buffer) (first @evt-buffer))
