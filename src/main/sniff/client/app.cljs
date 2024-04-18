@@ -10,10 +10,15 @@
 
 (def document (.-document js/window))
 
+(defn start-session []
+  (swap! event-stream conj {:type "start" :time (js/Date.)})
+  (js/console.log (clj->js event-stream) ))
+
 (defn page-setup
   "Register listeners, peform authentication, and setup the stream of events to the backend server."
   []
   (gevents/removeAll document)
+  (gevents/listen document "DOMContentLoaded" start-session)
   (gevents/listen document "mousedown" mouse/handle-mouse)
   (gevents/listen document "mouseup" mouse/handle-mouse)
   (gevents/listen document "cut" clipboard/handle-cut)
