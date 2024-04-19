@@ -10,8 +10,14 @@
 
 (def document (.-document js/window))
 
+(defn log-event [event]
+  (swap! event-stream conj event))
+
 (defn start-session []
-  (swap! event-stream conj {:type :start :time (js/Date.)}))
+  (log-event {:type :start :time (js/Date.)}))
+
+(defn handle-visibility-change []
+  (js/console.log "Handling change" (.-hidden document)))
 
 (defn page-setup
   "Register listeners, peform authentication, and setup the stream of events to the backend server."
@@ -22,4 +28,5 @@
   (gevents/listen document "mouseup" mouse/handle-mouse)
   (gevents/listen document "cut" clipboard/handle-cut)
   (gevents/listen document "copy" clipboard/handle-copy)
-  (gevents/listen document "paste" clipboard/handle-paste))
+  (gevents/listen document "paste" clipboard/handle-paste)
+  (gevents/listen document "visibilitychange" handle-visibility-change))
