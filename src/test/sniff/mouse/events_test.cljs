@@ -3,13 +3,13 @@
             [cljs.test :refer (deftest is)]))
 
 (def test-click
-  (js-obj "clientX" 1 "clientY" 1))
+  [(js-obj "clientX" 1 "clientY" 1)])
 
 (def test-click-not-same
-  (js-obj "clientX" 1 "clientY" 2))
+  [(js-obj "clientX" 1 "clientY" 2)])
 
 (deftest extracts-point
-  (is (= {:x 1 :y 1} (events/mouse-position test-click))))
+  (is (= {:x 1 :y 1} (events/mouse-position (first test-click)))))
 
 (deftest click-event
   (let [event (do (events/handle-mouse test-click)

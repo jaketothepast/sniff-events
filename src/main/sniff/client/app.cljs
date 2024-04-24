@@ -14,7 +14,7 @@
   (swap! event-stream conj event))
 
 (defn start-session []
-  (log-event {:type :start :time (js/Date.)}))
+  {:type :start :time (js/Date.)})
 
 (defn handle-visibility-change []
   (when (.-hidden document)
@@ -31,7 +31,6 @@
   (fn [& args]
     (let [evt (orig-fn args)]
       (js/console.log (clj->js evt))
-      (to-backend evt)
       evt)))
 
 (def event-handlers
