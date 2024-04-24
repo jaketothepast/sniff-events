@@ -10,9 +10,9 @@
  :dev-http {8080 "public" 3001 "out/test"}
  :builds
  {:client
-  {:target :browser
+  {:target :esm
    :output-dir "public/js"
-   :modules {:app {:init-fn sniff.client.app/page-setup}}}
+   :modules {:sniff-ai {:exports {init sniff.client.app/init}}}}
   :test
   {:target :browser-test
    :test-dir "out/test"}}}

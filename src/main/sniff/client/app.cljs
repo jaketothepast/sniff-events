@@ -17,16 +17,40 @@
   (log-event {:type :start :time (js/Date.)}))
 
 (defn handle-visibility-change []
-  (js/console.log "Handling change" (.-hidden document)))
+  (when (.-hidden document)
+    {:type :tab-switch :time (js/Date.)}))
+
+(defn to-backend
+  "Ship this event off to the backend"
+  [evt]
+  )
+
+(defn event-logger
+  "Wrap the original function, sending the event to the backend."
+  [orig-fn]
+  (fn [& args]
+    (let [evt (orig-fn args)]
+      (js/console.log (clj->js evt))
+      (to-backend evt)
+      evt)))
+
+(def event-handlers
+  "All event handlers needed to sniff events"
+  {"DOMContentLoaded" start-session
+   "mousedown" mouse/handle-mouse
+   "mouseup" mouse/handle-mouse
+   "cut" clipboard/handle-cut
+   "copy" clipboard/handle-copy
+   "paste" clipboard/handle-paste
+   "visibilitychange" handle-visibility-change})
 
 (defn page-setup
   "Register listeners, peform authentication, and setup the stream of events to the backend server."
   []
   (gevents/removeAll document)
-  (gevents/listen document "DOMContentLoaded" start-session)
-  (gevents/listen document "mousedown" mouse/handle-mouse)
-  (gevents/listen document "mouseup" mouse/handle-mouse)
-  (gevents/listen document "cut" clipboard/handle-cut)
-  (gevents/listen document "copy" clipboard/handle-copy)
-  (gevents/listen document "paste" clipboard/handle-paste)
-  (gevents/listen document "visibilitychange" handle-visibility-change))
+  (doseq [[event handler] event-handlers]
+    (gevents/listen document event (event-logger handler))))
+
+(defn init [student assignment backend]
+  (js/console.log "initializing")
+  (page-setup))
