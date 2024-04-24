@@ -2,11 +2,15 @@
   (:require [goog.events :as gevents]
             [clojure.math]
             [sniff.mouse.events :as mouse]
+            [lambdaisland.fetch :as fetch]
             [sniff.clipboard.events :as clipboard]))
 
 (def event-stream
   "Stream of events as they happen on the page."
   (atom []))
+
+(def app-config
+  (atom {}))
 
 (def document (.-document js/window))
 
@@ -14,7 +18,7 @@
   (swap! event-stream conj event))
 
 (defn start-session []
-  {:type :start :time (js/Date.)})
+  {:event :start :time (js/Date.)})
 
 (defn handle-visibility-change []
   (when (.-hidden document)
@@ -22,16 +26,18 @@
 
 (defn to-backend
   "Ship this event off to the backend"
-  [evt]
-  )
+  [{:keys [type] :as evt}]
+  (let [{:keys [student assignment backend]} @app-config]
+    (fetch/post backend {:query-params {:student_id student :assignment_id assignment :event_type (.-event evt)}})))
 
 (defn event-logger
   "Wrap the original function, sending the event to the backend."
   [orig-fn]
   (fn [& args]
-    (let [evt (orig-fn args)]
-      (js/console.log (clj->js evt))
-      evt)))
+    (let [evt (orig-fn args)] ;; get our event
+      (when (not (nil? evt))
+        (js/console.log (clj->js evt))
+        (to-backend (clj->js evt))))))
 
 (def event-handlers
   "All event handlers needed to sniff events"
@@ -52,4 +58,5 @@
 
 (defn init [student assignment backend]
   (js/console.log "initializing")
+  (reset! app-config {:student student :assignment assignment :backend backend})
   (page-setup))
