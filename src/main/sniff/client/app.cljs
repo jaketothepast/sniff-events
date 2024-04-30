@@ -21,8 +21,7 @@
   {:event :start :time (js/Date.)})
 
 (defn handle-visibility-change []
-  (when (.-hidden document)
-    {:type :tab-switch :time (js/Date.)}))
+  {:event :tab-switch :time (js/Date.)})
 
 (defn to-backend
   "Ship this event off to the backend"

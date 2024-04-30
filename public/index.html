@@ -1,10 +1,70 @@
 <html>
     <head>
         <title>Untitled</title>
+        <style>
+          body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+}
+
+.quiz-container {
+  max-width: 600px;
+  margin: 50px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  text-align: center;
+  color: #333;
+}
+
+#options {
+  margin-top: 20px;
+}
+
+label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+#submit-btn {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#submit-btn:hover {
+  background-color: #0056b3;
+}
+
+#result {
+  margin-top: 20px;
+  text-align: center;
+}
+  
+        </style>
     </head>
     <body>
-        <div id="testing" class="testing"></div>
-        <div id="clickable"><button>Hello</button></div>
+    <div class="quiz-container">
+        <h1>American Poetry Quiz</h1>
+        <p id="question">Who wrote the poem "The Road Not Taken"?</p>
+        <div id="options">
+        <label><input type="radio" name="answer" value="a"> Robert Frost</label><br>
+        <label><input type="radio" name="answer" value="b"> Maya Angelou</label><br>
+        <label><input type="radio" name="answer" value="c"> Langston Hughes</label><br>
+        <label><input type="radio" name="answer" value="d"> Emily Dickinson</label><br>
+        </div>
+        <button id="submit-btn">Submit Answer</button>
+        <p id="result"></p>
+    </div>
        <script type="module">
         // Initial config hook.
         import { init } from './js/sniff-ai.js'
