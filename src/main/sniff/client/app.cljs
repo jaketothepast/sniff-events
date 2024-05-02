@@ -3,7 +3,8 @@
             [clojure.math]
             [sniff.mouse.events :as mouse]
             [lambdaisland.fetch :as fetch]
-            [sniff.clipboard.events :as clipboard]))
+            [sniff.clipboard.events :as clipboard]
+            [sniff.visibility.events :as visibility]))
 
 (def event-stream
   "Stream of events as they happen on the page."
@@ -12,6 +13,7 @@
 (def app-config
   (atom {}))
 
+
 (def document (.-document js/window))
 
 (defn log-event [event]
@@ -19,9 +21,6 @@
 
 (defn start-session []
   {:event :start :time (js/Date.)})
-
-(defn handle-visibility-change []
-  {:event :tab-switch :time (js/Date.)})
 
 (defn to-backend
   "Ship this event off to the backend"
@@ -46,7 +45,7 @@
    "cut" clipboard/handle-cut
    "copy" clipboard/handle-copy
    "paste" clipboard/handle-paste
-   "visibilitychange" handle-visibility-change})
+   "visibilitychange" visibility/tab-change})
 
 (defn page-setup
   "Register listeners, peform authentication, and setup the stream of events to the backend server."

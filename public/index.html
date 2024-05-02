@@ -2,68 +2,108 @@
     <head>
         <title>Untitled</title>
         <style>
-          body {
-  font-family: Arial, sans-serif;
-  background-color: #f4f4f4;
-}
-
-.quiz-container {
-  max-width: 600px;
-  margin: 50px auto;
-  padding: 20px;
-  background-color: #fff;
-  border-radius: 5px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-h1 {
-  text-align: center;
-  color: #333;
-}
-
-#options {
-  margin-top: 20px;
-}
-
-label {
-  display: block;
-  margin-bottom: 10px;
-}
-
-#submit-btn {
-  display: block;
-  margin: 20px auto;
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-#submit-btn:hover {
-  background-color: #0056b3;
-}
-
-#result {
-  margin-top: 20px;
-  text-align: center;
-}
-  
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .quiz-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .question {
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .options {
+            margin-left: 20px;
+        }
+        .option {
+            margin-bottom: 5px;
+        }
+         .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            background-color: #4CAF50;
+            color: white;
+            font-weight: bold;
+            border-radius: 5px;
+        }
+        .checkmark {
+            margin-right: 5px;
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: white;
+            border: 2px solid #4CAF50;
+            position: relative;
+            top: 2px;
+        } 
         </style>
     </head>
     <body>
+    <div class="badge">
+        <span class="checkmark"></span>
+        Protected by Sniff.AI
+    </div>
     <div class="quiz-container">
-        <h1>American Poetry Quiz</h1>
-        <p id="question">Who wrote the poem "The Road Not Taken"?</p>
-        <div id="options">
-        <label><input type="radio" name="answer" value="a"> Robert Frost</label><br>
-        <label><input type="radio" name="answer" value="b"> Maya Angelou</label><br>
-        <label><input type="radio" name="answer" value="c"> Langston Hughes</label><br>
-        <label><input type="radio" name="answer" value="d"> Emily Dickinson</label><br>
-        </div>
-        <button id="submit-btn">Submit Answer</button>
-        <p id="result"></p>
+        <h1>Geology Quiz</h1>
+        <form id="quizForm">
+            <div class="question">
+                <p>1. What is the hardest natural substance on Earth?</p>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q1" value="a"> A) Iron</label><br>
+                    <label class="option"><input type="radio" name="q1" value="b"> B) Quartz</label><br>
+                    <label class="option"><input type="radio" name="q1" value="c"> C) Diamond</label><br>
+                    <label class="option"><input type="radio" name="q1" value="d"> D) Granite</label>
+                </div>
+            </div>
+
+            <div class="question">
+                <p>2. What type of rock forms from cooled lava?</p>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q2" value="a"> A) Sedimentary</label><br>
+                    <label class="option"><input type="radio" name="q2" value="b"> B) Igneous</label><br>
+                    <label class="option"><input type="radio" name="q2" value="c"> C) Metamorphic</label><br>
+                    <label class="option"><input type="radio" name="q2" value="d"> D) Fossilized</label>
+                </div>
+            </div>
+
+            <div class="question">
+                <p>3. Which layer of the Earth's interior is composed of molten iron and nickel?</p>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q3" value="a"> A) Crust</label><br>
+                    <label class="option"><input type="radio" name="q3" value="b"> B) Mantle</label><br>
+                    <label class="option"><input type="radio" name="q3" value="c"> C) Outer Core</label><br>
+                    <label class="option"><input type="radio" name="q3" value="d"> D) Inner Core</label>
+                </div>
+            </div>
+
+            <div class="question">
+                <p>4. What type of rock is formed by the compression and cementation of sediment?</p>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q4" value="a"> A) Igneous</label><br>
+                    <label class="option"><input type="radio" name="q4" value="b"> B) Metamorphic</label><br>
+                    <label class="option"><input type="radio" name="q4" value="c"> C) Sedimentary</label><br>
+                    <label class="option"><input type="radio" name="q4" value="d"> D) Magma</label>
+                </div>
+            </div>
+
+            <div class="question">
+                <p>5. What geological feature is formed when a portion of the Earth's crust moves against another?</p>
+                <div class="options">
+                    <label class="option"><input type="radio" name="q5" value="a"> A) Volcano</label><br>
+                    <label class="option"><input type="radio" name="q5" value="b"> B) Earthquake</label><br>
+                    <label class="option"><input type="radio" name="q5" value="c"> C) Fossil</label><br>
+                    <label class="option"><input type="radio" name="q5" value="d"> D) Glacier</label>
+                </div>
+            </div>
+
+            <input type="submit" value="Submit">
+        </form>
     </div>
        <script type="module">
         // Initial config hook.
