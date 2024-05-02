@@ -13,13 +13,10 @@
   (let [visible? @is-visible
         last-time @offpage-time
         event {:event :tab-switch :time (js/Date.)}]
-    (println @is-visible "VISIBLE" last-time "LAST TIME POOP")
     (swap! is-visible not) ; Swap our is-visible value after deref
     (if (not visible?)
       (swap! offpage-time js/Date.)
       (reset! offpage-time nil))
     (if (not (nil? last-time))
-      (assoc event :elapsed (- (-> (js/Date.) .getTime) last-time))
+      (assoc event :elapsed (- (-> (js/Date.) .getTime) (js/Date. last-time)))
       event)))
-
-(tab-change "fake")
