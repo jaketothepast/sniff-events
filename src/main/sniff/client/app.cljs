@@ -1,6 +1,9 @@
 (ns sniff.client.app
   (:require [goog.events :as gevents]
+            [goog.dom :as gdom]
             [clojure.math]
+            [cljs.core.async :refer [go]]
+            [cljs.core.async.interop :refer-macros [<p!]]
             [sniff.mouse.events :as mouse]
             [lambdaisland.fetch :as fetch]
             [sniff.clipboard.events :as clipboard]
@@ -47,9 +50,19 @@
    "paste" clipboard/handle-paste
    "visibilitychange" visibility/tab-change})
 
+(def media-devices (.-mediaDevices js/navigator))
+(def constraints (clj->js {:video true}))
+(defn startup-video []
+  (let [video-element (gdom/getElement "video")]
+    (go
+      (let [video-device (<p! (.getUserMedia media-devices constraints))]
+        (set! (.-srcObject video-element) video-device)
+        (.play video-element)))))
+
 (defn page-setup
   "Register listeners, peform authentication, and setup the stream of events to the backend server."
   []
+  (startup-video)
   (gevents/removeAll document)
   (doseq [[event handler] event-handlers]
     (gevents/listen document event (event-logger handler))))
@@ -58,3 +71,4 @@
   (js/console.log "initializing")
   (reset! app-config {:student student :assignment assignment :backend backend})
   (page-setup))
+
