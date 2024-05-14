@@ -15,8 +15,11 @@
   (atom []))
 
 (def app-config
-  (atom {:student nil :assignment nil :backend nil :landmarker nil}))
-
+  (atom {:student nil
+         :assignment nil
+         :backend nil
+         :landmarker nil
+         :last-video-time -1}))
 
 (def document (.-document js/window))
 
@@ -51,16 +54,26 @@
    "paste" clipboard/handle-paste
    "visibilitychange" visibility/tab-change})
 
+(defn predict-frame
+  "Given the video element, start predicting the frame"
+  [video-element landMarker]
+  (let [start-time-ms (js/performance.now)]
+    (-> (.detectForVideo landMarker video-element start-time-ms)
+        js/console.log)
+    (js/window.requestAnimationFrame #(predict-frame video-element landMarker))))
+
 (defn startup-video
   "Start the video playing in the video element."
-  []
+  [landMarker]
   (let [video-element (gdom/getElement "video")
         media-devices (.-mediaDevices js/navigator)
         constraints #js {:video true}]
     (go
       (let [video-device (<p! (.getUserMedia media-devices constraints))]
         (set! (.-srcObject video-element) video-device)
+        (.addEventListener video-element "loadeddata" #(predict-frame video-element landMarker))
         (.play video-element)))))
+
 
 ;; Creating the model landmarker task.
 (def model-path "models/face_landmarker.task")
@@ -76,19 +89,17 @@
                                 :runningMode "VIDEO"
                                 :outputFaceBlendshapes true
                                 :numFaces 1}))]
-      landMarker)))
+      (startup-video landMarker))))
 
 (defn page-setup
   "Register listeners, peform authentication, and setup the stream of events to the backend server."
   []
-  (startup-video)
   (gevents/removeAll document)
   (doseq [[event handler] event-handlers]
     (gevents/listen document event (event-logger handler))))
 
 (defn init [student assignment backend]
-  (js/console.log "initializing")
   ;; Initialize the model as well
-  (-> (create-face-landmarker)
-      (.then #(reset! app-config {:student student :assignment assignment :backend backend :landmarker %})))
+  (reset! app-config {:student student :assignment assignment :backend backend :last-video-time -1})
+  (create-face-landmarker)
   (page-setup))
