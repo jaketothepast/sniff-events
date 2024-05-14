@@ -4,6 +4,7 @@
             [clojure.math]
             [cljs.core.async :refer [go]]
             [cljs.core.async.interop :refer-macros [<p!]]
+            [clojure.string :as str]
             [sniff.mouse.events :as mouse]
             [lambdaisland.fetch :as fetch]
             [sniff.clipboard.events :as clipboard]
@@ -54,18 +55,30 @@
    "paste" clipboard/handle-paste
    "visibilitychange" visibility/tab-change})
 
+(defn draw-blend-shapes [blendShapes el]
+  (->> (map (fn [shape]
+          (str "<li>"
+               (js/JSON.stringify (clj->js shape))
+                "</li>"))
+        (-> (js->clj blendShapes)
+            first
+            first))
+       str/join
+       (set! (.-innerHTML el))))
+
 (defn predict-frame
   "Given the video element, start predicting the frame"
   [video-element landMarker]
   (let [start-time-ms (js/performance.now)]
     (-> (.detectForVideo landMarker video-element start-time-ms)
-        js/console.log)
+        .-faceBlendshapes
+        (draw-blend-shapes (gdom/getElement "video-blend-shapes")))
     (js/window.requestAnimationFrame #(predict-frame video-element landMarker))))
 
-(defn startup-video
+(defn startup-video-capture
   "Start the video playing in the video element."
   [landMarker]
-  (let [video-element (gdom/getElement "video")
+  (let [video-element (gdom/createElement "video")
         media-devices (.-mediaDevices js/navigator)
         constraints #js {:video true}]
     (go
@@ -73,7 +86,6 @@
         (set! (.-srcObject video-element) video-device)
         (.addEventListener video-element "loadeddata" #(predict-frame video-element landMarker))
         (.play video-element)))))
-
 
 ;; Creating the model landmarker task.
 (def model-path "models/face_landmarker.task")
@@ -89,7 +101,7 @@
                                 :runningMode "VIDEO"
                                 :outputFaceBlendshapes true
                                 :numFaces 1}))]
-      (startup-video landMarker))))
+      (startup-video-capture landMarker))))
 
 (defn page-setup
   "Register listeners, peform authentication, and setup the stream of events to the backend server."
