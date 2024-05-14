@@ -4,5 +4,8 @@
   "private": true,
   "devDependencies": {
     "shadow-cljs": "2.28.3"
+  },
+  "dependencies": {
+    "@mediapipe/tasks-vision": "^0.10.14"
   }
 }
