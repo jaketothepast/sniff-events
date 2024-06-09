@@ -9,7 +9,8 @@
             [lambdaisland.fetch :as fetch]
             [sniff.clipboard.events :as clipboard]
             [sniff.visibility.events :as visibility]
-            ["@mediapipe/tasks-vision" :refer (FilesetResolver FaceLandmarker)]))
+            ["@mediapipe/tasks-vision" :refer (FilesetResolver FaceLandmarker)]
+            ["html2canvas" :as html2canvas]))
 
 (def event-stream
   "Stream of events as they happen on the page."
@@ -110,23 +111,14 @@
   (doseq [[event handler] event-handlers]
     (gevents/listen document event (event-logger handler))))
 
-(def display-media-options
-  #js {:video {:display_surface "browser"}
-       :audio {:suppressLocalAudioPlayback true}
-       :preferCurrentTab true
-       :selfBrowserSurface "include"
-       :systemAudio "include"
-       :surfaceSwitching "include"
-       :monitorTypeSurfaces "include"})
-
-(defn start-screen-capture
-  []
-  (-> (.-mediaDevices js/navigator)
-      (.getDisplayMedia display-media-options)))
+;; The screenshotting loop happens with the HTML to canvas library
+(defn screenshot-page []
+  (-> (html2canvas (.-body document))
+      (.then (fn [canvas] (.appendChild (.-body document) canvas)))))
 
 (defn init [student assignment backend]
   ;; Initialize the model as well
   (reset! app-config {:student student :assignment assignment :backend backend :last-video-time -1})
-  (start-screen-capture)
   ;;(create-face-landmarker)
+  (screenshot-page)
   (page-setup))
