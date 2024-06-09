@@ -9,7 +9,6 @@
             [lambdaisland.fetch :as fetch]
             [sniff.clipboard.events :as clipboard]
             [sniff.visibility.events :as visibility]
-            ["@mediapipe/tasks-vision" :refer (FilesetResolver FaceLandmarker)]
             ["html2canvas" :as html2canvas]))
 
 (def event-stream
@@ -56,54 +55,6 @@
    "paste" clipboard/handle-paste
    "visibilitychange" visibility/tab-change})
 
-(defn draw-blend-shapes [blendShapes el]
-  (->> (map (fn [shape]
-          (str "<li>"
-               (js/JSON.stringify (clj->js shape))
-                "</li>"))
-        (-> (js->clj blendShapes)
-            first
-            first))
-       str/join
-       (set! (.-innerHTML el))))
-
-(defn predict-frame
-  "Given the video element, start predicting the frame"
-  [video-element landMarker]
-  (let [start-time-ms (js/performance.now)]
-    (-> (.detectForVideo landMarker video-element start-time-ms)
-        .-faceBlendshapes
-        (draw-blend-shapes (gdom/getElement "video-blend-shapes")))
-    (js/window.requestAnimationFrame #(predict-frame video-element landMarker))))
-
-(defn startup-video-capture
-  "Start the video playing in the video element."
-  [landMarker]
-  (let [video-element (gdom/createElement "video")
-        media-devices (.-mediaDevices js/navigator)
-        constraints #js {:video true}]
-    (go
-      (let [video-device (<p! (.getUserMedia media-devices constraints))]
-        (set! (.-srcObject video-element) video-device)
-        (.addEventListener video-element "loadeddata" #(predict-frame video-element landMarker))
-        (.play video-element)))))
-
-;; Creating the model landmarker task.
-(def model-path "models/face_landmarker.task")
-(defn create-face-landmarker
-  "Create our faceLandmarker"
-  []
-  (go
-    ;; Bring in the fileset resolver that pulls in wasm tasks.
-    (let [vision (<p! (FilesetResolver.forVisionTasks "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm"))
-          landMarker (<p! (FaceLandmarker.createFromOptions
-                           vision
-                           #js {:baseOptions #js {:modelAssetPath model-path}
-                                :runningMode "VIDEO"
-                                :outputFaceBlendshapes true
-                                :numFaces 1}))]
-      (startup-video-capture landMarker))))
-
 (defn page-setup
   "Register listeners, peform authentication, and setup the stream of events to the backend server."
   []
@@ -114,11 +65,9 @@
 ;; The screenshotting loop happens with the HTML to canvas library
 (defn screenshot-page []
   (-> (html2canvas (.-body document))
-      (.then (fn [canvas] (.appendChild (.-body document) canvas)))))
+      (.then (fn [canvas] (js/console.log (.toDataURL canvas))))))
 
 (defn init [student assignment backend]
   ;; Initialize the model as well
-  (reset! app-config {:student student :assignment assignment :backend backend :last-video-time -1})
-  ;;(create-face-landmarker)
   (screenshot-page)
   (page-setup))
